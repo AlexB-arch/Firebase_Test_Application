@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,8 +22,13 @@ import com.google.firebase.storage.FirebaseStorage;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
+    // Current User
+    private FirebaseUser currentUser;
+
     // TODO: Add Firebase Cloud Messaging
     private FirebaseMessaging mFirebaseMessaging; // Firebase Cloud Messaging
+
+    private TextView currentUserTextView;
 
 
     @Override
@@ -30,11 +36,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Current User
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        currentUserTextView = findViewById(R.id.current_user_email);
+        assert currentUser != null;
+        currentUserTextView.setText(currentUser.getEmail());
+
         // If the user is not logged in, go to the login screen
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+        if (currentUser == null) {
             startActivity(new Intent(this, EmailPasswordActivity.class));
             finish();
-            return;
         }
+
+        // Log the user out
+        // Views
+        Button logOutButton = findViewById(R.id.button_logout);
+        logOutButton.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(this, EmailPasswordActivity.class));
+            finish();
+        });
+
+    }
+
+    public void logOut() {
+        FirebaseAuth.getInstance().signOut();
+        currentUser = null;
+        startActivity(new Intent(this, EmailPasswordActivity.class));
+        finish();
     }
 }

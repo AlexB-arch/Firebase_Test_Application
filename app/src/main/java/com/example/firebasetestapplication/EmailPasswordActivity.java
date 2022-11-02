@@ -51,7 +51,8 @@ public class EmailPasswordActivity extends AppCompatActivity {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createAccount(email.getText().toString(), password.getText().toString());
+                // Launch the sign up activity
+                startActivity(new Intent(EmailPasswordActivity.this, SignUpActivity.class));
             }
         });
     }
