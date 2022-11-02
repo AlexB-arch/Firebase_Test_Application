@@ -26,6 +26,8 @@ public class EmailPasswordActivity extends AppCompatActivity {
 
     private EditText email;
     private EditText password;
+    Button logInButton = findViewById(R.id.button_login);
+    Button signUpButton = findViewById(R.id.button_signup);
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -35,8 +37,6 @@ public class EmailPasswordActivity extends AppCompatActivity {
 
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
-        Button logInButton = findViewById(R.id.button_login);
-        Button signUpButton = findViewById(R.id.button_signup);
 
         // TODO: Initialize Firebase Authentication
         mAuth = FirebaseAuth.getInstance(); // Firebase Authentication
@@ -48,11 +48,12 @@ public class EmailPasswordActivity extends AppCompatActivity {
             }
         });
 
+        // Takes you to the sign up page
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Launch the sign up activity
-                startActivity(new Intent(EmailPasswordActivity.this, SignUpActivity.class));
+                Intent intent = new Intent(EmailPasswordActivity.this, SignUpActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -129,6 +130,11 @@ public class EmailPasswordActivity extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         updateUI(currentUser);
+    }
+
+    public void signUpClick(View view) {
+        // Launch the sign up activity
+        startActivity(new Intent(EmailPasswordActivity.this, SignUpActivity.class));
     }
 
     private void updateUI(FirebaseUser currentUser) {
