@@ -1,23 +1,19 @@
 package com.example.firebasetestapplication;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.EditText;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -25,10 +21,13 @@ public class MainActivity extends AppCompatActivity {
     // Current User
     private FirebaseUser currentUser;
 
-    // TODO: Add Firebase Cloud Messaging
-    private FirebaseMessaging mFirebaseMessaging; // Firebase Cloud Messaging
+    // TODO: Add Firebase Storage
+    private FirebaseStorage mFirebaseStorage; // Firebase Storage
 
-    private TextView currentUserTextView;
+    // TODO: Add Firebase Realtime Database
+    private FirebaseDatabase mFirebaseDatabase; // Firebase Realtime Database
+
+
 
 
     @Override
@@ -36,33 +35,37 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Current User
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        currentUserTextView = findViewById(R.id.current_user_email);
-        assert currentUser != null;
-        currentUserTextView.setText(currentUser.getEmail());
+        FloatingActionButton fab = findViewById(R.id.fab);
 
-        // If the user is not logged in, go to the login screen
-        if (currentUser == null) {
-            startActivity(new Intent(this, EmailPasswordActivity.class));
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            // Not signed in, launch the Sign In activity
+            startActivity(new Intent(this, SignUpActivity.class));
             finish();
+            return;
+        } else {
+            // Get current user
+            currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            displayChatMessages();
         }
 
-        // Log the user out
-        // Views
-        Button logOutButton = findViewById(R.id.button_logout);
-        logOutButton.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(this, EmailPasswordActivity.class));
-            finish();
+        // Push a message to the Firebase Realtime Database
+        fab.setOnClickListener(view -> {
+            EditText input = findViewById(R.id.input);
+            FirebaseDatabase.getInstance()
+                    .getReference()
+                    .push()
+                    .setValue(new ChatMessages(input.getText().toString(),
+                            Objects.requireNonNull(FirebaseAuth.getInstance()
+                                            .getCurrentUser())
+                                    .getDisplayName())
+                    );
+            input.setText("");
         });
 
     }
 
-    public void logOut() {
-        FirebaseAuth.getInstance().signOut();
-        currentUser = null;
-        startActivity(new Intent(this, EmailPasswordActivity.class));
-        finish();
+    private void displayChatMessages() {
+
     }
+
 }

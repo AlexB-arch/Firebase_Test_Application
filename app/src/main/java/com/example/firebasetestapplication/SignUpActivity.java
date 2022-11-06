@@ -26,12 +26,10 @@ public class SignUpActivity extends AppCompatActivity {
     // TODO: Add Firebase Authentication
     private FirebaseAuth mAuth; // Firebase Authentication
 
-    // TODO: Add Firebase Realtime Database
-    private FirebaseDatabase mDatabase; // Firebase Realtime Database
-
     private Button submitButton;
     private EditText email;
     private EditText password;
+    private EditText username;
     private Button cancelButton;
 
     @Override
@@ -41,6 +39,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         // Widgets
         email = findViewById(R.id.signup_email);
+        username = findViewById(R.id.signup_username);
         password = findViewById(R.id.signup_password);
         cancelButton = findViewById(R.id.button_cancel);
         submitButton = findViewById(R.id.button_submit);
@@ -48,8 +47,8 @@ public class SignUpActivity extends AppCompatActivity {
         // TODO: Initialize Firebase Authentication
         mAuth = FirebaseAuth.getInstance(); // Firebase Authentication
 
-        // TODO: Initialize Firebase Realtime Database
-        mDatabase = FirebaseDatabase.getInstance(); // Firebase Realtime Database
+        // Firebase Realtime Database
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance(); // Firebase Realtime Database
 
         // TODO: Add a click listener to the sign up button
         submitButton.setOnClickListener(new View.OnClickListener() {
@@ -62,6 +61,11 @@ public class SignUpActivity extends AppCompatActivity {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "createUserWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
+                                // Add new user to Firebase Realtime Database
+                                mDatabase.getReference().child("users").child(user.getUid()).child("username").setValue(username.getText().toString());
+                                // Go to MainActivity
+                                Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+                                startActivity(intent);
                                 updateUI(user);
                             } else {
                                 // If sign in fails, display a message to the user.
@@ -81,31 +85,6 @@ public class SignUpActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-    }
-        // TODO: Create a new user in Firebase Realtime Database
-        // TODO: Launch the main activity
-        // TODO: Handle errors
-
-    private boolean validateForm() {
-        boolean valid = true;
-
-        email.getText().toString();
-        if (TextUtils.isEmpty((CharSequence) email)) {
-            email.setError("Required.");
-            valid = false;
-        } else {
-            email.setError(null);
-        }
-
-        password.getText().toString();
-        if (TextUtils.isEmpty((CharSequence) password)) {
-            password.setError("Required.");
-            valid = false;
-        } else {
-            password.setError(null);
-        }
-
-        return valid;
     }
 
     private void updateUI(FirebaseUser user) {
