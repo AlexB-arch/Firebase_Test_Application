@@ -29,17 +29,21 @@ public class SignUpActivity extends AppCompatActivity {
     // TODO: Add Firebase Realtime Database
     private FirebaseDatabase mDatabase; // Firebase Realtime Database
 
-    Button signUpButton = findViewById(R.id.button_signup);
-    // Text Fields
-    EditText email = findViewById(R.id.signup_email);
-    EditText password = findViewById(R.id.signup_password);
-    EditText confirmPassword = findViewById(R.id.signup_confirmpassword);
-    Button cancelButton = findViewById(R.id.button_cancel);
+    private Button submitButton;
+    private EditText email;
+    private EditText password;
+    private Button cancelButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        // Widgets
+        email = findViewById(R.id.signup_email);
+        password = findViewById(R.id.signup_password);
+        cancelButton = findViewById(R.id.button_cancel);
+        submitButton = findViewById(R.id.button_submit);
 
         // TODO: Initialize Firebase Authentication
         mAuth = FirebaseAuth.getInstance(); // Firebase Authentication
@@ -48,7 +52,7 @@ public class SignUpActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance(); // Firebase Realtime Database
 
         // TODO: Add a click listener to the sign up button
-        signUpButton.setOnClickListener(new View.OnClickListener() {
+        submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Add new user to Firebase Authentication
@@ -58,6 +62,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "createUserWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
+                                updateUI(user);
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "createUserWithEmail:failure", task.getException());
@@ -77,35 +82,9 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
     }
-
-
-        // TODO: Create a new user in Firebase Authentication
         // TODO: Create a new user in Firebase Realtime Database
         // TODO: Launch the main activity
         // TODO: Handle errors
-
-    public void createAccount(String email, String password) {
-        Log.d(TAG, "createAccount:" + email);
-        if (!validateForm()) {
-            return;
-        }
-
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(EmailPasswordActivity.this, R.string.login_failed,
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            startActivity(new Intent(EmailPasswordActivity.this, MainActivity.class));
-                            finish();
-                        }
-                    }
-                });
-    }
 
     private boolean validateForm() {
         boolean valid = true;
