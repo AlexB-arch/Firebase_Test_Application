@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -38,12 +39,8 @@ public class MainActivity extends AppCompatActivity {
     // TODO: Add Firebase Realtime Database
     private FirebaseDatabase mFirebaseDatabase; // Firebase Realtime Database
 
+    // Populates a ListView with chat messages
     private FirebaseListAdapter<ChatMessages> adapter;
-
-
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        FirebaseListAdapter<ChatMessages> adapter;
 
         if (getInstance().getCurrentUser() == null) {
             // Not signed in, launch the Sign In activity
@@ -77,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
                     );
             input.setText("");
         });
-
     }
 
     private void displayChatMessages() {
